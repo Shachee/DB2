@@ -1,48 +1,221 @@
-CREATE TYPE PersonType AS (id integer,name char(20));
-
-create TYPE ShowType AS (
- id integer,
- date date,
- JudgeList REF( JudgeType) MULTISET SCOPE Judges
- ContList REF( ContestantType) MULTISET SCOPE Contestants
-);
-
-create type ContestantType under PersonType as (
-	ShowAttended REF( ShowType) MULTISET SCOPE Shows,
-	PiecePerformed REF(PieceType) MULTISET SCOPE Pieces
-);
+CREATE  TYPE PersonType AS (id integer,name char(20));
 
 create type PieceType as (
-	id integer, 
-	name char(20)
+	Pid integer, 
+	PName char(20)
 );
 
-create type JudgeType UNDER PersonType as (ShowJudged REF( ShowType) MULTISET SCOPE Shows);
+create table Person of PersonType;
 
-create type Q2JudgeType UNDER persontype as (
-qid integer
+create table Pieces of PieceType(
+	PRIMARY KEY(Pid)
+);
+
+create type JudgeType;
+
+CREATE TABLE IF NOT EXISTS Contestants (PRIMARY KEY(id)) INHERITS (Person) ;
+
+CREATE TABLE IF NOT EXISTS Judges (PRIMARY KEY(id)) INHERITS (Person) ;
+
+create TABLE IF NOT EXISTS ShowDet(
+ Sid integer PRIMARY KEY,
+ Sdate date
+);
+
+create Table if not exists ShowJ(
+	sjId integer PRIMARY KEY,
+ 	judgeId integer REFERENCES Judges  ON DELETE RESTRICT,
+	showId INTEGER REFERENCES ShowDet  ON DELETE CASCADE
 );
 
 
-craate type ScoreType(
-	contestantName ContestantType,
-	pieceName PieceType,
-	Points ROW(showId INTEGER, judgeId integer, marks integer)
+create Table if not exists Scores(
+	sjId integer REFERENCES ShowJ,
+	Contestant integer REFERENCES Contestants (id),
+	Piece integer REFERENCES Pieces(Pid),
+	marks integer,
+	PRIMARY KEY(sjId,Contestant, Piece)
 
 );
 
-create table judge of JudgeType;
-create table contestant of ContestantType;
-create table shows of ShowType;
-create table pieces of PieceType;
-create table scores of ScoreType;
-
-create table trans of TranscriptType;
-
-select * from trans;
+Insert into Judges values(1,'Judy');
+Insert into Judges values(2,'Lucy');
+Insert into Judges values(3,'Irving');
+Insert into Judges values(4,'Oscar');
+Insert into Judges values(5,'Phil');
 
 
+Insert into Contestants values(10,'Joe');
+Insert into Contestants values(11,'Mary');
+Insert into Contestants values(12,'Bess');
+Insert into Contestants values(13,'Don');
+Insert into Contestants values(14,'Ann');
+Insert into Contestants values(15,'Bob');
+Insert into Contestants values(16,'Tom');
+
+Insert into ShowDet values(20,'20140202');
+Insert into ShowDet values(21,'20140402');
+Insert into ShowDet values(22,'20140602');
+Insert into ShowDet values(23,'20140802');
+Insert into ShowDet values(24,'20141005');
+
+Insert into Pieces values(50,'Barcarolle');
+Insert into Pieces values(51,'Giselle');
+Insert into Pieces values(52,'Besame Mucho');
+Insert into Pieces values(53,'Swan Lake');
+Insert into Pieces values(54,'Habanera');
+Insert into Pieces values(55,'The Tramp');
+
+/*  Show1: Date=20140202, Judges=Judy, Lucy, Irving */
+
+INSERT INTO ShowJ Values(30, 1, 20);
+INSERT INTO ShowJ Values(31, 2, 20 );
+INSERT INTO ShowJ Values(32, 3, 20 );
+
+/*  Show2: Date=20140402, Judges=Judy, Phil	*/
+
+INSERT INTO ShowJ Values(33, 1, 21 );
+INSERT INTO ShowJ Values(34, 5, 21 );
+
+/* Show3: Date=20140602, Judges=Irving, Phil, Oscar */
+INSERT INTO ShowJ Values(35, 3 , 22 );
+INSERT INTO ShowJ Values(36, 5 , 22 );
+INSERT INTO ShowJ Values(37, 4 , 22 );
+
+/* Show4: Date=20140802, Judges=Lucy, Oscar */
+INSERT INTO ShowJ Values(38, 2 , 23 );
+INSERT INTO ShowJ Values(39, 4 , 23 );
+
+/* Show5: Date=20141005, Judges=Lucy, Irving, Phil */
+INSERT INTO ShowJ Values(40, 2 , 24 );
+INSERT INTO ShowJ Values(41, 3 , 24 );
+INSERT INTO ShowJ Values(42, 5 , 24 );
+
+/*
+  Show1: Date=20140202, Judges=Judy, Lucy, Irving 
+
+INSERT INTO ShowJ Values(30, 1, 20);
+INSERT INTO ShowJ Values(31, 2, 20 );
+INSERT INTO ShowJ Values(32, 3, 20 );
+
+*/
+
+Insert into Scores values(30, 10,50, 7);
+Insert into Scores values(31, 10,50, 8);
+Insert into Scores values(32, 10,50, 6);
+Insert into Scores values(30, 11,50, 5);
+Insert into Scores values(31, 11,50, 6);
+Insert into Scores values(32, 11,50, 6);
+Insert into Scores values(30, 11,51, 9);
+Insert into Scores values(31, 11,51, 6);
+Insert into Scores values(32, 11,51, 8);
+Insert into Scores values(30, 12,52, 4);
+Insert into Scores values(31, 12,52, 5);
+Insert into Scores values(32, 12,52, 6);
+Insert into Scores values(30, 13,52, 9);
+Insert into Scores values(31, 13,52, 9);
+Insert into Scores values(32, 13,52, 7);
+Insert into Scores values(30, 13,53, 7);
+Insert into Scores values(31, 13,53, 7);
+Insert into Scores values(32, 13,53, 10);
+
+Insert into Scores values(33, 15,53, 8);
+Insert into Scores values(34, 15,53, 6);
+Insert into Scores values(33, 11,54, 3);
+Insert into Scores values(34, 11,54, 5);
+Insert into Scores values(33, 11,52, 9);
+Insert into Scores values(34, 11,52, 10);
+Insert into Scores values(33, 14,54, 7);
+Insert into Scores values(34, 14,54, 6);
+Insert into Scores values(33, 12,51, 8);
+Insert into Scores values(34, 12,51, 7);
+Insert into Scores values(33, 16,52, 5);
+Insert into Scores values(34, 16,52, 5);
+Insert into Scores values(33, 16,55, 7);
+Insert into Scores values(34, 16,55, 6);
+
+Insert into Scores values(35, 15,55, 8);
+Insert into Scores values(36, 15,55, 7);
+Insert into Scores values(37, 15,55, 9);
+Insert into Scores values(35, 14,52, 7);
+Insert into Scores values(36, 14,52, 6);
+Insert into Scores values(37, 14,52, 4);
+Insert into Scores values(35, 12,53, 6);
+Insert into Scores values(36, 12,53, 8);
+Insert into Scores values(37, 12,53, 7);
+Insert into Scores values(35, 16,50, 9);
+Insert into Scores values(36, 16,50, 7);
+Insert into Scores values(37, 16,50, 6);
+Insert into Scores values(35, 13,51, 8);
+Insert into Scores values(36, 13,51, 6);
+Insert into Scores values(37, 13,51, 9);
+
+Insert into Scores values(38, 10,55, 7);
+Insert into Scores values(39, 10,55, 6);
+Insert into Scores values(38, 15,50, 6);
+Insert into Scores values(39, 15,50, 8);
+Insert into Scores values(38, 14,52, 9);
+Insert into Scores values(39, 14,52, 8);
+Insert into Scores values(38, 16,55, 8);
+Insert into Scores values(39, 16,55, 10);
+Insert into Scores values(38, 16,50, 5);
+Insert into Scores values(39, 16,50, 5);
+
+Insert into Scores values(40, 15,53, 3);
+Insert into Scores values(41, 15,53, 5);
+Insert into Scores values(42, 15,53, 6);
+Insert into Scores values(40, 15,51, 4);
+Insert into Scores values(41, 15,51, 6);
+Insert into Scores values(42, 15,51, 8);
+Insert into Scores values(40, 11,50, 5);
+Insert into Scores values(41, 11,50, 7);
+Insert into Scores values(42, 11,50, 10);
+Insert into Scores values(40, 11,52, 6);
+Insert into Scores values(41, 11,52, 8);
+Insert into Scores values(42, 11,52, 7);
+Insert into Scores values(40, 14,52, 7);
+Insert into Scores values(41, 14,52, 9);
+Insert into Scores values(42, 14,52, 6);
+Insert into Scores values(40, 12,52, 9);
+Insert into Scores values(41, 12,52, 8);
+Insert into Scores values(42, 12,52, 8);
+Insert into Scores values(40, 12,54, 8);
+Insert into Scores values(41, 12,54, 7);
+Insert into Scores values(42, 12,54, 10);
+Insert into Scores values(40, 16,55, 6);
+Insert into Scores values(41, 16,55, 6);
+Insert into Scores values(42, 16,55, 8);
+Insert into Scores values(40, 13,55, 5);
+Insert into Scores values(41, 13,55, 8);
+Insert into Scores values(42, 13,55, 7);
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Select * from ShowDet;
+Select * from ShowJ;
+Select * from Scores;
+
+
+Drop Table ShowJ;
+Drop Table 'Scores';
