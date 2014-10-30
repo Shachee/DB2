@@ -1,0 +1,48 @@
+CREATE TYPE PersonType AS (id integer,name char(20));
+
+create TYPE ShowType AS (
+ id integer,
+ date date,
+ JudgeList REF( JudgeType) MULTISET SCOPE Judges
+ ContList REF( ContestantType) MULTISET SCOPE Contestants
+);
+
+create type ContestantType under PersonType as (
+	ShowAttended REF( ShowType) MULTISET SCOPE Shows,
+	PiecePerformed REF(PieceType) MULTISET SCOPE Pieces
+);
+
+create type PieceType as (
+	id integer, 
+	name char(20)
+);
+
+create type JudgeType UNDER PersonType as (ShowJudged REF( ShowType) MULTISET SCOPE Shows);
+
+create type Q2JudgeType UNDER persontype as (
+qid integer
+);
+
+
+craate type ScoreType(
+	contestantName ContestantType,
+	pieceName PieceType,
+	Points ROW(showId INTEGER, judgeId integer, marks integer)
+
+);
+
+create table judge of JudgeType;
+create table contestant of ContestantType;
+create table shows of ShowType;
+create table pieces of PieceType;
+create table scores of ScoreType;
+
+create table trans of TranscriptType;
+
+select * from trans;
+
+
+
+
+
+
