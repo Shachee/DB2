@@ -392,7 +392,29 @@ ORDER BY record1.cont
 
 
 
+/*Q5*/
 
+create recursive view IndirectChain(Cont1,Cont2) As
+Select distinct C1.name , C2.name
+from Scores Sc, Scores Sc1 , Contestants C1, Contestants C2
+where Sc.Contestant > Sc1.Contestant and Sc.Piece = Sc1.Piece and Sc.marks = Sc1.marks and 
+(select judgeId from ShowJ SJ where SJ.sjId = Sc.sjId ) = (select judgeId from ShowJ SJ where SJ.sjId = Sc1.sjId) 
+and (select showId from ShowJ SJ where SJ.sjId = Sc.sjId ) = (select showId from ShowJ SJ where SJ.sjId = Sc1.sjId) 
+and Sc.Contestant = C1.id and Sc1.Contestant = C2.id 
+Union
+Select D.C1name, I.Cont2 
+from (Select distinct C1.name as C1name, C2.name as C2name
+from Scores Sc, Scores Sc1 , Contestants C1, Contestants C2
+where Sc.Contestant > Sc1.Contestant and Sc.Piece = Sc1.Piece and Sc.marks = Sc1.marks and 
+(select judgeId from ShowJ SJ where SJ.sjId = Sc.sjId ) = (select judgeId from ShowJ SJ where SJ.sjId = Sc1.sjId) 
+and (select showId from ShowJ SJ where SJ.sjId = Sc.sjId ) = (select showId from ShowJ SJ where SJ.sjId = Sc1.sjId) 
+and Sc.Contestant = C1.id and Sc1.Contestant = C2.id 
+) D, IndirectChain I 
+where D.C2name = I.Cont1
+
+Select * from IndirectChain;
+
+/*//////////////////////////////////////////////////////*/
 
 
 
