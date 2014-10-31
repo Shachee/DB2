@@ -394,6 +394,10 @@ ORDER BY record1.cont
 
 
 
+
+
+
+
 Select * from ShowDet;
 Select * from ShowJ;
 Select * from Scores;
