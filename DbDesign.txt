@@ -223,59 +223,172 @@ and Sc.Contestant = C1.id and Sc1.Contestant = C2.id
 
 
 /*Q2*/
+
+create view v1 as
+select C1.id, C2.id
+from Contestants C1, Contestants C2 JOIN (select avg(Sc.marks) ,avg(Sc1.marks) from Scores Sc ,  Scores Sc1
+where Sc.Piece = Sc1.Piece and Sc.Contestant > Sc1.Contestant
+group by (Sc.Contestant, Sc.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc.sjId ),Sc1.Contestant, Sc1.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc1.sjId ))
+ having avg(Sc.marks)= avg(Sc1.marks)) t 
+
+ select avg(Sc.marks) ,avg(Sc1.marks) from Scores Sc ,  Scores Sc1
+where Sc.Piece = Sc1.Piece and Sc.Contestant > Sc1.Contestant
+group by (Sc.Contestant, Sc.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc.sjId ),Sc1.Contestant, Sc1.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc1.sjId ))
+ having avg(Sc.marks)= avg(Sc1.marks)
+
+
+select Sc.Contestant , Sc1.Contestant from Scores Sc ,  Scores Sc1
+where Sc.Piece = Sc1.Piece and Sc.Contestant > Sc1.Contestant
+group by (Sc.Contestant, Sc.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc.sjId ),Sc1.Contestant, Sc1.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc1.sjId ))
+having avg(Sc.marks)= avg(Sc1.marks)
+
+
+select avg(Sc.marks)  from Scores Sc
+group by (Sc.Contestant,Sc.Piece,(select showId from ShowJ SJ where SJ.sjId = Sc.sjId ))
+
+select Sc.Contestant,avg(Sc.marks)  from Scores Sc
+group by (Sc.Contestant,Sc.Piece)
+
+
+
+select C.name, avg(Sc.marks)  from Scores Sc, Contestants C
+where Sc.Contestant = C.id
+group by (Sc.Contestant, Sc.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc.sjId ))
+
+ select *from v1;
+ drop view v1;
+
+Select distinct C1.name , C2.name
+from Scores Sc, Scores Sc1 , Contestants C1, Contestants C2
+where Sc.Contestant > Sc1.Contestant and Sc.Piece = Sc1.Piece  
+and (select avg(marks) from Sc group by (Sc.Contestant, Sc.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc.sjId )) 
+  = (select avg(marks) from Sc1 group by (Sc1.Contestant, Sc1.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc1.sjId )) ) 
+and Sc.Contestant = C1.id and Sc1.Contestant = C2.id 
+
+(select avg(marks) from Scores Sc group by (Sc.Contestant, Sc.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc.sjId )) )
+
+((select avg(marks) from Sc group by (Sc.Contestant, Sc.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc.sjId )) ) = ((select avg(marks) from Sc1 group by (Sc1.Contestant, Sc1.Piece, (select showId from ShowJ SJ where SJ.sjId = Sc1.sjId )) )) 
+)
+
 SELECT s1.cont, s2.cont
 FROM
-(SELECT avg(marks) as av, dt.Sdate as show, p.PName as form, c.name as cont
+(SELECT avg(marks) as av, p.PName as artPiece, c.name as cont
 FROM Scores Sc3, Pieces p, Contestants c, ShowJ sj, ShowDet dt
 WHERE p.Pid = Sc3.Piece 
 AND Sc3.Contestant = c.id
 AND Sc3.sjId = sj.sjId
 AND sj.showId = dt.Sid
-Group By p.PName, c.name, dt.Sdate
-ORDER BY dt.Sdate ) s1,
-(SELECT avg(marks) as av, dt.Sdate as show, p.PName as form, c.name as cont
+Group By p.PName, c.name, dt.Sid
+ORDER BY dt.Sid ) s1,
+(SELECT avg(marks) as av, p.PName as artPiece, c.name as cont
 FROM Scores Sc3, Pieces p, Contestants c, ShowJ sj, ShowDet dt
 WHERE p.Pid = Sc3.Piece 
 AND Sc3.Contestant = c.id
 AND Sc3.sjId = sj.sjId
 AND sj.showId = dt.Sid
-Group By p.PName, c.name, dt.Sdate
-ORDER BY dt.Sdate ) s2 
+Group By p.PName, c.name, dt.Sid
+ORDER BY dt.Sid ) s2 
 WHERE s1.av = s2.av 
-AND s1.form = s2.form
+AND s1.artPiece = s2.artPiece
 AND s1.cont < s2.cont
 ORDER BY s2.cont
-
 
 
 /*Q3*/
 
-SELECT s1.cont, s2.cont
+	SELECT s1.cont, s2.cont
+	FROM
+	(SELECT max(marks) as max_score, p.PName as artPiece, c.name as cont
+	FROM Scores s, Pieces p, Contestants c, ShowJ sj, ShowDet dt
+	WHERE p.Pid = s.Piece 
+	AND s.Contestant = c.id
+	AND s.sjId = sj.sjId
+	AND sj.showId = dt.Sid
+	Group By p.PName, c.name, dt.Sid
+	HAVING COUNT(sj.judgeId) >= 3
+	ORDER BY dt.Sid, cont ) s1,
+	(SELECT max(marks) as max_score, p.PName as artPiece, c.name as cont
+	FROM Scores s, Pieces p, Contestants c, ShowJ sj, ShowDet dt
+	WHERE p.Pid = s.Piece 
+	AND s.Contestant = c.id
+	AND s.sjId = sj.sjId
+	AND sj.showId = dt.Sid
+	Group By p.PName, c.name, dt.Sid
+	HAVING COUNT(sj.judgeId) >= 3
+	ORDER BY dt.Sid, cont ) s2 
+	WHERE s1.max_score = s2.max_score 
+	AND s1.artPiece = s2.artPiece
+	AND s1.cont < s2.cont
+	ORDER BY s2.cont
+
+/* Test queries*/
+
+SELECT DISTINCT c.name as cont, p.PName as form
+FROM Scores s, Pieces p, Contestants c, ShowJ sj, ShowDet dt
+WHERE p.Pid = s.Piece 
+AND s.Contestant = c.id
+AND s.sjId = sj.sjId
+AND sj.showId = dt.Sid
+ORDER BY cont
+
+
+/*Q4*/
+
+SELECT DISTINCT record1.cont, record2.cont
 FROM
-(SELECT max(marks) as max_score, dt.Sdate as show, p.PName as form, c.name as cont
+(SELECT DISTINCT c.name as cont, p.PName as form
 FROM Scores s, Pieces p, Contestants c, ShowJ sj, ShowDet dt
 WHERE p.Pid = s.Piece 
 AND s.Contestant = c.id
 AND s.sjId = sj.sjId
 AND sj.showId = dt.Sid
-Group By p.PName, c.name, dt.Sdate
-HAVING COUNT(sj.judgeId) >= 3
-ORDER BY dt.Sdate, cont ) s1,
-(SELECT max(marks) as max_score, dt.Sdate as show, p.PName as form, c.name as cont
+ORDER BY cont
+) record1,
+(SELECT DISTINCT c.name as cont, p.PName as form
 FROM Scores s, Pieces p, Contestants c, ShowJ sj, ShowDet dt
 WHERE p.Pid = s.Piece 
 AND s.Contestant = c.id
 AND s.sjId = sj.sjId
 AND sj.showId = dt.Sid
-Group By p.PName, c.name, dt.Sdate
-HAVING COUNT(sj.judgeId) >= 3
-ORDER BY dt.Sdate, cont ) s2 
-WHERE s1.max_score = s2.max_score 
-AND s1.form = s2.form
-AND s1.cont < s2.cont
-ORDER BY s2.cont
-
-
+ORDER BY cont
+) record2 
+WHERE record1.cont != record2.cont
+AND 
+(
+(SELECT COUNT(*) as c_intersect FROM(
+(SELECT DISTINCT form from (SELECT DISTINCT c.name as cont, p.PName as form
+FROM Scores s, Pieces p, Contestants c, ShowJ sj, ShowDet dt
+WHERE p.Pid = s.Piece 
+AND s.Contestant = c.id
+AND s.sjId = sj.sjId
+AND sj.showId = dt.Sid
+ORDER BY cont
+) r1
+where r1.cont = record1.cont)
+INTERSECT 
+(SELECT DISTINCT form from (SELECT DISTINCT c.name as cont, p.PName as form
+FROM Scores s, Pieces p, Contestants c, ShowJ sj, ShowDet dt
+WHERE p.Pid = s.Piece 
+AND s.Contestant = c.id
+AND s.sjId = sj.sjId
+AND sj.showId = dt.Sid
+ORDER BY cont
+) r2 
+where r2.cont = record2.cont)
+) r)
+>=
+(SELECT count(*) as c_r2 FROM 
+(SELECT DISTINCT form from (SELECT DISTINCT c.name as cont, p.PName as form
+FROM Scores s, Pieces p, Contestants c, ShowJ sj, ShowDet dt
+WHERE p.Pid = s.Piece 
+AND s.Contestant = c.id
+AND s.sjId = sj.sjId
+AND sj.showId = dt.Sid
+ORDER BY cont
+) r2 
+where r2.cont = record2.cont) r)
+)
+ORDER BY record1.cont
 
 
 
