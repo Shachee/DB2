@@ -1,3 +1,14 @@
+CREATE DATABASE cse532
+  WITH OWNER = postgres
+       ENCODING = 'UTF8'
+       TABLESPACE = pg_default
+       LC_COLLATE = 'English_United States.1252'
+       LC_CTYPE = 'English_United States.1252'
+       CONNECTION LIMIT = -1;
+
+
+
+
 CREATE  TYPE PersonType AS (id integer,name char(20));
 
 create type PieceType as (
@@ -211,8 +222,58 @@ and Sc.Contestant = C1.id and Sc1.Contestant = C2.id
 
 
 
+/*Q2*/
+SELECT s1.cont, s2.cont
+FROM
+(SELECT avg(marks) as av, dt.Sdate as show, p.PName as form, c.name as cont
+FROM Scores Sc3, Pieces p, Contestants c, ShowJ sj, ShowDet dt
+WHERE p.Pid = Sc3.Piece 
+AND Sc3.Contestant = c.id
+AND Sc3.sjId = sj.sjId
+AND sj.showId = dt.Sid
+Group By p.PName, c.name, dt.Sdate
+ORDER BY dt.Sdate ) s1,
+(SELECT avg(marks) as av, dt.Sdate as show, p.PName as form, c.name as cont
+FROM Scores Sc3, Pieces p, Contestants c, ShowJ sj, ShowDet dt
+WHERE p.Pid = Sc3.Piece 
+AND Sc3.Contestant = c.id
+AND Sc3.sjId = sj.sjId
+AND sj.showId = dt.Sid
+Group By p.PName, c.name, dt.Sdate
+ORDER BY dt.Sdate ) s2 
+WHERE s1.av = s2.av 
+AND s1.form = s2.form
+AND s1.cont < s2.cont
+ORDER BY s2.cont
 
 
+
+/*Q3*/
+
+SELECT s1.cont, s2.cont
+FROM
+(SELECT max(marks) as max_score, dt.Sdate as show, p.PName as form, c.name as cont
+FROM Scores s, Pieces p, Contestants c, ShowJ sj, ShowDet dt
+WHERE p.Pid = s.Piece 
+AND s.Contestant = c.id
+AND s.sjId = sj.sjId
+AND sj.showId = dt.Sid
+Group By p.PName, c.name, dt.Sdate
+HAVING COUNT(sj.judgeId) >= 3
+ORDER BY dt.Sdate, cont ) s1,
+(SELECT max(marks) as max_score, dt.Sdate as show, p.PName as form, c.name as cont
+FROM Scores s, Pieces p, Contestants c, ShowJ sj, ShowDet dt
+WHERE p.Pid = s.Piece 
+AND s.Contestant = c.id
+AND s.sjId = sj.sjId
+AND sj.showId = dt.Sid
+Group By p.PName, c.name, dt.Sdate
+HAVING COUNT(sj.judgeId) >= 3
+ORDER BY dt.Sdate, cont ) s2 
+WHERE s1.max_score = s2.max_score 
+AND s1.form = s2.form
+AND s1.cont < s2.cont
+ORDER BY s2.cont
 
 
 
