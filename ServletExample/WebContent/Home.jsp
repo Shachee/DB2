@@ -6,17 +6,18 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>My first JSP</title>
+<title>Fetch Data from PostGRESQL</title>
 </head>
 <body>
 	<form action="HelloServlet">
-		Please enter Query Number: <br> <input type="radio" name="query"
-			value="Query1">Query 1<br> <input type="radio"
-			name="query" value="Query2">Query 2<br> <input
-			type="radio" name="query" value="Query3">Query 3<br> <input
-			type="radio" name="query" value="Query4">Query 4<br> <input
-			type="radio" name="query" value="Query5">Query 5<br> <input
-			type="submit" value="fetchValues">
+		Please Enter Query Number: <br> <br>
+		<input type="radio" name="query" value="one">Query 1<br> 
+		<input type="radio"	name="query" value="two">Query 2<br> 
+		<input type="radio" name="query" value="three">Query 3<br> 
+		<input type="radio" name="query" value="four">Query 4<br> 
+		<input type="radio" name="query" value="five">Query 5<br> 
+		
+		<input type="submit" value="fetchValues">
 	</form>
 </body>
 </html>
