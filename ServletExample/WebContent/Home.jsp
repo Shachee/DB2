@@ -15,9 +15,9 @@
 		<input type="radio"	name="query" value="two">Query 2<br> 
 		<input type="radio" name="query" value="three">Query 3<br> 
 		<input type="radio" name="query" value="four">Query 4<br> 
-		<input type="radio" name="query" value="five">Query 5<br> 
+		<input type="radio" name="query" value="five">Query 5<br><br> 
 		
-		<input type="submit" value="fetchValues">
+		<input type="submit" value="Fetch Results">
 	</form>
 </body>
 </html>

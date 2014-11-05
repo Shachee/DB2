@@ -21,7 +21,7 @@ public class HelloWorld extends HttpServlet {
 		String result = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n"
 				+ "<html> \n" + "<head> \n" 
 				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\"> \n" 
-		+ "<title> My first jsp </title> \n" + "</head> \n" + "<body> \n" + "<font size=\"2px\" color=\"" 
+		+ "<title> Fetched Results From Database </title> \n" + "</head> \n" + "<body> \n" + "<font size=\"3px\" color=\"" 
 				+ color + "\">"; 
 		
 		int queryId = -1;
@@ -42,14 +42,12 @@ public class HelloWorld extends HttpServlet {
 		String resultSet = RunQuery(queryId);
 		
 		out.println ( result  
-		+ "Query Results:::" + resultSet + "</font> \n" + "</body> \n" + "</html>" );		
-		
-		
+		+ "Query Results ::" + resultSet + "</font> \n" + "</body> \n" + "</html>" );
 	}
 	
 	private String RunQuery(int id) {
 		ResultSet rs = null;
-		String resultSet = "<table>";
+		String resultSet = "<table align=\"center\" border=\"1\">";
 		
 		Connection c = null;
 		Statement stmt = null;
@@ -86,12 +84,16 @@ public class HelloWorld extends HttpServlet {
 	         System.out.println("Query Given is "+id);
 	         rs = stmt.executeQuery(sql);
 	         
+	         resultSet += "<tr>";
+	         resultSet += "<th>Contestant Name</th>";
+	         resultSet += "<th>Contestant Name</th>";
+	         resultSet += "</tr>";
 	         while ( rs.next() ) {
 	        	 resultSet += "<tr>";
 	             String sid = rs.getString("name1");
 	             String  sname = rs.getString("name2");
-	             resultSet += "<th>"+sid+"</th>";
-	             resultSet += "<th>"+sname+"</th>";
+	             resultSet += "<td>"+sid+"</td>";
+	             resultSet += "<td>"+sname+"</td>";
 	             resultSet += "</tr>";	             
 	          }
 	         /*
