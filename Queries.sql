@@ -155,7 +155,7 @@ binary relation: X and Y (directly) co-auditioned iff they both performed the sa
 same show and got the same score from at least one (same) judge. Thus, a chained co-audition
 can be either a direct or an indirect co-audition.*/
 
-create recursive view IndirectChain(Cont1,Cont2) As
+create or replace recursive view IndirectChain(Cont1,Cont2) As
 Select distinct C1.name , C2.name
 from Scores Sc, Scores Sc1 , Contestants C1, Contestants C2
 where Sc.Contestant > Sc1.Contestant and Sc.Piece = Sc1.Piece and Sc.marks = Sc1.marks and 

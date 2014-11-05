@@ -1,9 +1,9 @@
- We pledge my (or our) honor that all parts of this project were done by me (or us) alone and without collaboration with anybody else.
+ We pledge our honor that all parts of this project were done by us alone and without collaboration with anybody else.
 /****************************************************************************
 CSE532 -- Project 2
 File name: DB_Design
 Author(s): Shachee Mishra (109915951 )
-Phani Krishna Penumarthi (SBU Id )
+Phani Krishna Penumarthi (109951184 )
 
 
 ****************************************************************************/
