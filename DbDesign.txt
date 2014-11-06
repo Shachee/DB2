@@ -50,6 +50,19 @@ Table: Scores - Stores marks received by an artist in a show for a piece perform
 
 /*
 
+Work Division:
+The installation of PostGreSQL was done by Shachee.
+The installation of Apache server, and setting eclipse environment was done by Phani.
+This was done on two different machines initially. 
+Design decisions were taken by both of us. 
+We strictly followed the policy: "I will work only if the partner is available".
+And all the work is performed with strong collaboration by both of us.
+Finally, we integrated both queries and the front-end, to make a working demo. 
+Both of us helped each other in installing the software, and the demo can be shown on both machines now.
+
+*/
+/*
+
 To install: 
 
 Run SQL statements till all the insert commands. 
